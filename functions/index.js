@@ -44,16 +44,20 @@ app.get('/hello-world', (req, res) => {
 
 //Create - API
 app.post('/api/create', (req, res) => {
-    (async () =>{
-        try{
-            await db.collection('Users').doc('/' + req.body.id + '/').create({item: req.body.item});
-            return res.status(200).send();
-        }
-        catch(error){
-            console.log(error);
-            return res.status(500).send(error);
-        }
+    (async () => {
+      try {
+        await db.collection('Users').doc(req.body.id).set({
+          City: req.body.City,
+          MailId: req.body["Mail Id"],
+          Name: req.body.Name,
+          isActive: req.body.isActive
+        });
+        return res.status(200).send();
+      } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+      }
     })();
-});
+  });
 
 exports.app = functions.https.onRequest(app);
