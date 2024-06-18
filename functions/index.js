@@ -29,6 +29,7 @@ app.use(cors({origin: true}));
 
 //permissions
 var serviceAccount = require("./permissions.json");
+const { QuerySnapshot } = require('firebase-admin/firestore');
 admin.initializeApp({
 credential: admin.credential.cert(serviceAccount),
 databaseURL: "https://react-crud-2b469..firebaseio.com"
@@ -46,7 +47,7 @@ app.get('/hello-world', (req, res) => {
 app.post('/api/create', (req, res) => {
     (async () => {
       try {
-        await db.collection('Users').doc(req.body.id).set({
+        await db.collection('Users').doc().set({
           City: req.body.City,
           MailId: req.body["Mail Id"],
           Name: req.body.Name,
@@ -54,6 +55,33 @@ app.post('/api/create', (req, res) => {
         });
         return res.status(200).send();
       } catch (error) {
+        console.log(error);
+        return res.status(500).send(error);
+      }
+    })();
+  });
+
+  //Read - API
+  app.get('/api/read', (req, res) =>{
+    (async () => {
+      try{
+        let query = db.collection('Users');
+        let response = [];
+        await query.get().then(QuerySnapshot =>{
+          let docs = QuerySnapshot.docs;
+          for(let doc of docs){
+            const selectedItem = {
+              id: doc.id,
+              name: doc.data().Name,
+              city: doc.data().City,
+              mailId: doc.data().MailId
+            };
+            response.push(selectedItem);
+          }
+        });
+        return res.status(200).send(response);
+      }
+      catch(error){
         console.log(error);
         return res.status(500).send(error);
       }
