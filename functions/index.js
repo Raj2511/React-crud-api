@@ -145,6 +145,36 @@ app.delete('/api/delete/:item_id', (req, res) => {
 });
 
 //API: http://127.0.0.1:5001/react-crud-2b469/us-central1/app/api/delete/:item_id
-//should pass id
+//should pass id param
+
+//Get User - API
+app.get('/api/getUser/:item_id', (req, res) => {
+  (async () => {
+    try {
+      let query = db.collection('Users').doc(req.params.item_id);
+      let response = [];
+      await query.get().then(value => {
+        const userDetail ={
+          id: value.id,
+          name: value.data().Name,
+          city: value.data().City,
+          mail: value.data().MailId,
+          isActive: value.data().isActive
+        };
+        //let docs = value.data().Name;
+        response.push(userDetail);
+        
+      });
+      return res.status(200).send(response);
+    }
+    catch (error) {
+      console.log(error);
+      return res.status(500).send(error);
+    }
+  })();
+});
+
+//API: http://127.0.0.1:5001/react-crud-2b469/us-central1/app/api/getUser/:item_id
+//Should pass id in param
 
 exports.app = functions.https.onRequest(app);
