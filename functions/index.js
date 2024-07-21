@@ -47,11 +47,12 @@ app.get('/hello-world', (req, res) => {
 app.post('/api/create', (req, res) => {
   (async () => {
     try {
+      const {name, mail, city, status} = req.body;
       await db.collection('Users').doc().set({
-        City: req.body.City,
-        MailId: req.body["Mail Id"],
-        Name: req.body.Name,
-        isActive: req.body.isActive
+        City: city,
+        MailId: mail,
+        Name: name,
+        isActive: status
       });
       return res.status(200).send();
     } catch (error) {
@@ -83,7 +84,8 @@ app.get('/api/read', (req, res) => {
             id: doc.id,
             name: doc.data().Name,
             city: doc.data().City,
-            mailId: doc.data().MailId
+            mailId: doc.data().MailId,
+            isActive: doc.data().isActive
           };
           response.push(selectedItem);
         }
