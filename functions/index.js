@@ -47,7 +47,13 @@ app.get('/hello-world', (req, res) => {
 app.post('/api/create', (req, res) => {
   (async () => {
     try {
-      const {name, mail, city, status} = req.body;
+      //const {name, mail, city, status} = req.body;
+      const { user } = req.body;
+      if (!user) {
+        return res.status(400).send({ error: 'User data is required' });
+      }
+  
+      const { name, mail, city, status } = user;
       await db.collection('Users').doc().set({
         City: city,
         MailId: mail,
